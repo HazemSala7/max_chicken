@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "600574335633",
+    "project_id": "klimar-4d59d",
+    "storage_bucket": "klimar-4d59d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600574335633:android:7417b4fee4035e0d9dbd30",
+        "android_client_info": {
+          "package_name": "klimar.perfect.sala7"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "600574335633-ku002sjt0v98n2r93a95unknaer63app.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcSgmmd8WD-GOlTlUdGK6-K5COi1gzwXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "600574335633-ku002sjt0v98n2r93a95unknaer63app.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
