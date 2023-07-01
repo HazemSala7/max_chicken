@@ -25,8 +25,8 @@ class Dialog1 extends StatefulWidget {
 }
 
 class _DialogState extends State<Dialog1> {
-  late var new_price = int.parse(widget.price);
-  late var new_total = int.parse(widget.price);
+  late var new_price = double.parse(widget.price);
+  late var new_total = double.parse(widget.price);
 
   int index = 0;
   var myid;

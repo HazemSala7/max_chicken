@@ -1,4 +1,4 @@
-var URL = "https://perfectadv.ps/Rovan/api/";
+var URL = "https://perfectadv.ps/klimar/api/";
 
 //PUBLIC
 var URL_HOME = URL + "homepage";
@@ -11,6 +11,7 @@ var URL_CATEGORIES = URL + "categories";
 var URL_SINGLE_PRODUCT = URL + "single_product";
 var URL_SINGLE_COMPANY = URL + "single_company";
 var URL_ADD_CART = URL + "add_cart";
+var URL_ADD_ORDER = URL + "add_order";
 var URL_CARTS = URL + "carts";
 var URL_EDIT_CART = URL + "edit_cart";
 var URL_REMOVE_CART = URL + "remove_cart";

@@ -15,6 +15,7 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trendyol/constants/constants.dart';
+import 'package:trendyol/server/server.dart';
 
 import '../home_screen/home_screen.dart';
 
@@ -127,7 +128,7 @@ class _BuyNowState extends State<BuyNow> {
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
 
- _goToTheLake() async {
+  _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
@@ -175,8 +176,7 @@ class _BuyNowState extends State<BuyNow> {
         'Authorization': 'Bearer $token',
         'ContentType': 'application/json'
       };
-      var url = 'http://qadrs.com/ayesh_dent/api/add_order';
-      final response = await http.post(Uri.parse(url),
+      final response = await http.post(Uri.parse(URL_ADD_ORDER),
           body: {
             'note': noteController.text,
             'phone': phoneController.text,
@@ -433,72 +433,72 @@ class _BuyNowState extends State<BuyNow> {
                       ),
                     );
                   }),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 25, right: 25, top: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xffD6D3D3))),
-                      height: 300,
-                      width: double.infinity,
-                      child: Stack(
-                        alignment: Alignment.topLeft,
-                        children: [
-                          GoogleMap(
-                            markers: Set<Marker>.of(_markers),
-                            onTap: _handleTap,
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
-                              ),
-                            ].toSet(),
+                  // Padding(
+                  //   padding:
+                  //       const EdgeInsets.only(left: 25, right: 25, top: 10),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //         border: Border.all(color: Color(0xffD6D3D3))),
+                  //     height: 300,
+                  //     width: double.infinity,
+                  //     child: Stack(
+                  //       alignment: Alignment.topLeft,
+                  //       children: [
+                  //         GoogleMap(
+                  //           markers: Set<Marker>.of(_markers),
+                  //           onTap: _handleTap,
+                  //           gestureRecognizers:
+                  //               <Factory<OneSequenceGestureRecognizer>>[
+                  //             new Factory<OneSequenceGestureRecognizer>(
+                  //               () => new EagerGestureRecognizer(),
+                  //             ),
+                  //           ].toSet(),
 
-                            // padding: EdgeInsets.all(100),
-                            scrollGesturesEnabled: true,
-                            // myLocationButtonEnabled: true,
-                            // myLocationEnabled: true,
-                            zoomControlsEnabled: true,
-                            mapType: MapType.terrain,
-                            initialCameraPosition: _kGooglePlex,
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
-                            },
-                          ),
-                          // IconButton(
-                          //     icon: Icon(Icons.battery_charging_full),
-                          //     onPressed: () async {
-                          //       currentLocation();
-                          //     }),
-                          InkWell(
-                            onTap: () {
-                              currentLocation();
-                            },
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              color: Colors.white,
-                              child: Column(
-                                children: [
-                                  Container(
-                                      height: 30,
-                                      width: 30,
-                                      child:
-                                          Image.asset('assets/location.jpeg')),
-                                  Text(
-                                    'موقعي',
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  //           // padding: EdgeInsets.all(100),
+                  //           scrollGesturesEnabled: true,
+                  //           // myLocationButtonEnabled: true,
+                  //           // myLocationEnabled: true,
+                  //           zoomControlsEnabled: true,
+                  //           mapType: MapType.terrain,
+                  //           initialCameraPosition: _kGooglePlex,
+                  //           onMapCreated: (GoogleMapController controller) {
+                  //             _controller.complete(controller);
+                  //           },
+                  //         ),
+                  //         // IconButton(
+                  //         //     icon: Icon(Icons.battery_charging_full),
+                  //         //     onPressed: () async {
+                  //         //       currentLocation();
+                  //         //     }),
+                  //         InkWell(
+                  //           onTap: () {
+                  //             currentLocation();
+                  //           },
+                  //           child: Container(
+                  //             height: 50,
+                  //             width: 50,
+                  //             color: Colors.white,
+                  //             child: Column(
+                  //               children: [
+                  //                 Container(
+                  //                     height: 30,
+                  //                     width: 30,
+                  //                     child:
+                  //                         Image.asset('assets/location.jpeg')),
+                  //                 Text(
+                  //                   'موقعي',
+                  //                   style: TextStyle(
+                  //                       fontSize: 10,
+                  //                       fontWeight: FontWeight.bold),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 25, right: 25, top: 10),
@@ -568,7 +568,7 @@ class _BuyNowState extends State<BuyNow> {
                               children: [
                                 Text(
                                   // "f",
-                                  "₪${int.parse(widget.total.toString())}",
+                                  "₪${double.parse(widget.total.toString())}",
                                   style: GoogleFonts.cairo(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold),
@@ -581,7 +581,7 @@ class _BuyNowState extends State<BuyNow> {
                                 ),
                                 Text(
                                   // "g,",
-                                  "₪${int.parse(widget.total.toString()) + int.parse(del.toString())}",
+                                  "₪${double.parse(widget.total.toString()) + int.parse(del.toString())}",
                                   style: GoogleFonts.cairo(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold),

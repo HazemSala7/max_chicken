@@ -410,7 +410,7 @@ class _SingleProductState extends State<SingleProduct> {
                                         Dialog1(
                                           id: widget.id,
                                           name: widget.name,
-                                          price: "${widget.price}",
+                                          price: widget.price.toString(),
                                         )
                                       ],
                                     );

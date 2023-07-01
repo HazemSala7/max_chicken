@@ -49,7 +49,7 @@ class _CartState extends State<Cart> {
         });
   }
 
-  Widget CartScreen({var CartsArray, int SUM_ALL = 0}) {
+  Widget CartScreen({var CartsArray, var SUM_ALL}) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -127,7 +127,7 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Widget cartnav({int SUM_ALL = 0, var CartsArray}) {
+  Widget cartnav({var SUM_ALL, var CartsArray}) {
     return Container(
       height: 50,
       color: Colors.white,

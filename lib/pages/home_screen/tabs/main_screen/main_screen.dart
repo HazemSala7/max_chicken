@@ -350,7 +350,7 @@ class _MainScreenState extends State<MainScreen> {
                                           // physics:
                                           //     NeverScrollableScrollPhysics(),
                                           // shrinkWrap: true,
-                                          itemCount: products.length,
+                                          itemCount: categories.length,
                                           gridDelegate:
                                               const SliverGridDelegateWithFixedCrossAxisCount(
                                                   crossAxisCount: 2,
