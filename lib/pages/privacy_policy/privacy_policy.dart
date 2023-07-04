@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:trendyol/constants/constants.dart';
 
 class Privacy extends StatefulWidget {
@@ -27,10 +29,19 @@ class _PrivacyState extends State<Privacy> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
                         child: Text(
-                          "",
-                        ))
+                          AppLocalizations.of(context)!.privacy,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: text1(),
+                    )
                   ],
                 ),
               ),
@@ -41,9 +52,9 @@ class _PrivacyState extends State<Privacy> {
     );
   }
 
-  // Html text1(String privacy) {
-  //   return Html(data: _htmlContent);
-  // }
+  Html text1() {
+    return Html(data: _htmlContent);
+  }
 
   final _htmlContent = """
   <div>
@@ -55,12 +66,12 @@ class _PrivacyState extends State<Privacy> {
 </p>
     <p>-يمكنكم متابعة حالة الطلبيات من خلال التطبيق </p>
     <p>التطبيق يشمل التوصيل لكافة مناطق الضفة الغربية والقدس و الداخل</p>
-    <p>التوصيل مجاني من خلال مندوبي rOVAN في المدن التالية:
+    <p>التوصيل مجاني من خلال مندوبي Kliamr في المدن التالية:
 جنين، نابلس، طولكرم و قلقيلية</p>
     <p>تكلفة التوصيل تضاف للطلبية بقيمة 20 شيقل للمناطق الأخرى داخل الضفة</p>
     <p>-طريقة الدفع المعتمدة لدى المتجر هي الدفع نقدا عند الاستلام</p>
     <p>تكلفة التوصيل تضاف للطلبية بقيمة 20 شيقل للمناطق الأخرى داخل الضفة</p>
-    <p>مع كل المودة لحضراتكم .. استمتعوا بالتسوق لدى متجركم Pal-Dent الأفضل في فلسطين</p>
+    <p>مع كل المودة لحضراتكم .. استمتعوا بالتسوق لدى متجركم Kliamr الأفضل في فلسطين</p>
   </div>
   """;
 }

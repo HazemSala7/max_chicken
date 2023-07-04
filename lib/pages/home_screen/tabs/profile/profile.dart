@@ -53,11 +53,11 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: [
                   addressMethod(name: "الملخص"),
-                  lineMethod(),
-                  profileCard(
-                      name: "الطلبيات",
-                      iconornot: false,
-                      image: "assets/checkout.png"),
+                  // lineMethod(),
+                  // profileCard(
+                  //     name: "الطلبيات",
+                  //     iconornot: false,
+                  //     image: "assets/checkout.png"),
                   lineMethod(),
                   profileCard(
                       name: "السله",
@@ -104,12 +104,12 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: [
                   addressMethod(name: "حسابي"),
-                  lineMethod(),
-                  profileCard(
-                    name: "المعلومات الشخصيه",
-                    icon: Icons.person,
-                    iconornot: true,
-                  ),
+                  // lineMethod(),
+                  // profileCard(
+                  //   name: "المعلومات الشخصيه",
+                  //   icon: Icons.person,
+                  //   iconornot: true,
+                  // ),
                   lineMethod(),
                   Login
                       ? profileCard(
@@ -157,12 +157,12 @@ class _ProfileState extends State<Profile> {
               child: Column(
                 children: [
                   addressMethod(name: "المزيد"),
-                  lineMethod(),
-                  profileCard(
-                    name: "للمساعده & التواصل",
-                    icon: Icons.person,
-                    iconornot: true,
-                  ),
+                  // lineMethod(),
+                  // profileCard(
+                  //   name: "للمساعده & التواصل",
+                  //   icon: Icons.person,
+                  //   iconornot: true,
+                  // ),
                   lineMethod(),
                   profileCard(
                       name: "معلومات عنا",
