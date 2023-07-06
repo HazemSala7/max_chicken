@@ -18,3 +18,4 @@ var URL_REMOVE_CART = URL + "remove_cart";
 var URL_FAVOURITES = URL + "favourites";
 var URL_ADD_FAVOURITE = URL + "add_favourite";
 var URL_REMOVE_FAVOURITE = URL + "remove_favourite";
+var URL_REMOVE_USER = URL + "remove_user";

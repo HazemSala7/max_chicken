@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendyol/constants/constants.dart';
 import 'package:trendyol/pages/authentication/login_screen/login_screen.dart';
 import 'package:trendyol/pages/home_screen/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendyol/pages/privacy_policy/privacy_policy.dart';
 import 'package:trendyol/pages/who/who.dart';
+
+import '../../../../server/function/functions.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -39,6 +43,125 @@ class _ProfileState extends State<Profile> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: SizedBox(
+                              height: 70,
+                              width: 155,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "هل تريد بالتأكيد حذف حسابك بشكل نهائي ؟ ",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: SizedBox(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                      color: MAIN_COLOR,
+                                                    ))),
+                                              );
+                                            },
+                                          );
+
+                                          await removeUser(context);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 40,
+                                          child: Center(
+                                            child: Text(
+                                              "نعم",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: MAIN_COLOR),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 40,
+                                          child: Center(
+                                            child: Text(
+                                              "لا",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: MAIN_COLOR),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    width: 130,
+                    height: 40,
+                    child: Center(
+                      child: Text(
+                        "حذف حسابي",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: MAIN_COLOR),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 20, right: 15, left: 15),
             child: Container(

@@ -137,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Container(
                   // height: 150,
                   width: 250,
-                  child: Image.asset("assets/rovan_logo.png"),
+                  child: Image.asset("assets/logo.png"),
                 ),
               ),
               Padding(

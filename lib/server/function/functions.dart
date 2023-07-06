@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendyol/server/server.dart';
 
+import '../../pages/home_screen/home_screen.dart';
+
 var headers = {'ContentType': 'application/json', "Connection": "Keep-Alive"};
 getHome() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -187,6 +189,42 @@ removeCart(id, BuildContext context) async {
     Navigator.of(context, rootNavigator: true).pop();
     Fluttertoast.showToast(
       msg: "محذوف مسبقا",
+    );
+  }
+}
+
+removeUser(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('access_token');
+  int? id = prefs.getInt('user_id');
+  var headers = {
+    'Authorization': 'Bearer $token',
+    'ContentType': 'application/json'
+  };
+  var response = await http.post(Uri.parse(URL_REMOVE_USER),
+      body: {
+        'id': id.toString(),
+      },
+      headers: headers);
+  var data = jsonDecode(response.body);
+  if (data['status'] == 'true') {
+    Navigator.of(context, rootNavigator: true).pop();
+    Fluttertoast.showToast(
+      msg: "تم حذف حسابك بنجاح",
+    );
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => HomeScreen(
+          currentIndex: 0,
+        ),
+      ),
+      (route) => false,
+    );
+  } else {
+    Navigator.of(context, rootNavigator: true).pop();
+    Fluttertoast.showToast(
+      msg: "فشلت عليه حذف حسابك , الرجاء المحاوله فيما بعد",
     );
   }
 }
