@@ -324,16 +324,6 @@ class _MainScreenState extends State<MainScreen> {
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            InkWell(
-                                              onTap: () {},
-                                              child: Text(
-                                                "المزيد",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: MAIN_COLOR),
-                                              ),
-                                            ),
                                           ],
                                         ),
                                       ),

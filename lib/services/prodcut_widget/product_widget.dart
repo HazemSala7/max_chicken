@@ -204,28 +204,68 @@ class _ProductWidgetState extends State<ProductWidget> {
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
               child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: Center(
-                                child: CircularProgressIndicator(
-                              color: MAIN_COLOR,
-                            ))),
-                      );
-                    },
-                  );
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  bool? login = prefs.getBool('login');
+                  if (login == true) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: MAIN_COLOR,
+                              ))),
+                        );
+                      },
+                    );
 
-                  widget.favourite == false
-                      ? addFavourite(widget.id, context)
-                      : removeFavourite(widget.id, context);
-                  setState(() {
-                    widget.favourite = !widget.favourite;
-                  });
+                    widget.favourite == false
+                        ? addFavourite(widget.id, context)
+                        : removeFavourite(widget.id, context);
+                    setState(() {
+                      widget.favourite = !widget.favourite;
+                    });
+                  } else {
+                    return showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text(AppLocalizations.of(context)!.dialogl1),
+                          actions: <Widget>[
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                );
+                              },
+                              child: Container(
+                                width: 100,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: MAIN_COLOR,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Center(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.login,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: Container(
                   width: 40,

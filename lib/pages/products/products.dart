@@ -23,6 +23,22 @@ class _ProductsState extends State<Products> {
           body: SingleChildScrollView(
             child: Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back_sharp,
+                            color: MAIN_COLOR,
+                            size: 30,
+                          ))
+                    ],
+                  ),
+                ),
                 FutureBuilder(
                     future:
                         getProductsCategories(widget.category_id.toString()),

@@ -24,13 +24,30 @@ class WhoWeAre extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.who,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 20, right: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_sharp,
+                                color: MAIN_COLOR,
+                                size: 30,
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30),
+                            child: Text(
+                              AppLocalizations.of(context)!.who,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container()
+                        ],
                       ),
                     ),
                     Container(
