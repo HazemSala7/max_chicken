@@ -51,6 +51,7 @@ dependencies:
   google_maps_flutter: ^2.3.0
   location: ^4.4.0
   flutter_html: ^3.0.0-alpha.3
+  get: ^4.6.5
 
 dependency_overrides:
   intl: ^0.17.0
@@ -106,6 +107,7 @@ flutter:
     - assets/phone.jpeg
     - assets/padlock.jpeg
     - assets/location.jpeg
+    - assets/mp3_test.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

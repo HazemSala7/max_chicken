@@ -6,20 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendyol/server/server.dart';
 
 import '../../pages/home_screen/home_screen.dart';
+import '../../pages/who/who.dart';
 
 var headers = {'ContentType': 'application/json', "Connection": "Keep-Alive"};
+
 getHome() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int? id = prefs.getInt('user_id');
+  print("$URL_HOME/${id.toString()}");
   var response =
       await http.get(Uri.parse("$URL_HOME/${id.toString()}"), headers: headers);
-  var res = jsonDecode(response.body);
-  return res;
-}
-
-getShops() async {
-  var url = "http://10.0.2.2:8000/api/shops";
-  var response = await http.get(Uri.parse(url), headers: headers);
   var res = jsonDecode(response.body);
   return res;
 }

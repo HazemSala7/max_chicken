@@ -1,5 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationService {
@@ -25,13 +25,13 @@ class LocalNotificationService {
 
       final NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
-        "app_notification",
-        "app_notification channel",
-        playSound: true,
-        icon: "@mipmap/launcher_icon",
-        importance: Importance.max,
-        priority: Priority.high,
-      ));
+              "app_notification", "app_notification channel",
+              playSound: true,
+              icon: "@mipmap/launcher_icon",
+              importance: Importance.max,
+              ongoing: true,
+              priority: Priority.high,
+              enableLights: true));
       await _notificationsPlugin.show(
         id,
         message.notification!.title,

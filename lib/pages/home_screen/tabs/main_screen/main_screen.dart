@@ -29,141 +29,6 @@ void initState() {
   });
 }
 
-Widget MainCategoryWidget({int i = 2}) {
-  return FutureBuilder(
-    future: getShopScreen(i),
-    builder: (BuildContext context, AsyncSnapshot snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: SpinKitPulse(
-            color: MAIN_COLOR,
-            size: 60,
-          ),
-        );
-      } else if (snapshot.data != null) {
-        var companies = snapshot.data['companies'];
-        var sub_categories = snapshot.data['sub_categories'];
-        var products = snapshot.data['products'];
-
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  right: 15, top: 15, bottom: 15, left: 15),
-              child: Row(
-                children: [
-                  Text(
-                    "Categories",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  )
-                ],
-              ),
-            ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 5,
-                childAspectRatio: 0.9,
-                mainAxisSpacing: 5,
-                crossAxisCount: 4,
-              ),
-              itemCount: sub_categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                return cateWidget(
-                    image: sub_categories[index]["image"],
-                    name: sub_categories[index]["name"],
-                    id: sub_categories[index]["id"]);
-              },
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                itemCount: companies.length,
-                itemBuilder: ((context, index) {
-                  return CompanyWidget(
-                    id: companies[index]["id"],
-                    image: companies[index]["logo_image"],
-                    name: companies[index]["name"],
-                    background_image: companies[index]["background_image"],
-                    address: companies[index]["address"] ?? " - ",
-                    description: " - ",
-                  );
-                })),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                height: 20,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10, left: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Products",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => Products(
-                          //             id: widget.id,
-                          //             name: widget.name,
-                          //           )),
-                          // );
-                        },
-                        child: Text(
-                          "More Products",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: MAIN_COLOR),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top: 10),
-              child: GridView.builder(
-                  scrollDirection: Axis.vertical,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: products.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, childAspectRatio: 0.7),
-                  itemBuilder: (context, int index) {
-                    return ProductWidget(
-                        image: products[index]["image"],
-                        favourite: products[index]["favourite"],
-                        category_id: products[index]["category_id"],
-                        name: products[index]["name"] ?? "",
-                        desc: products[index]["description"] ?? "",
-                        price: products[index]["price"] ?? "",
-                        id: products[index]["id"] ?? 1);
-                  }),
-            ),
-          ],
-        );
-      } else {
-        return Center(
-            child: SizedBox(
-                height: 40, width: 40, child: CircularProgressIndicator()));
-      }
-    },
-  );
-}
-
 Widget cateWidget({String name = "", String image = "", int id = 0}) {
   return Column(
     children: [
@@ -271,180 +136,175 @@ class _MainScreenState extends State<MainScreen> {
           Column(
             children: [
               Container(
-                child: current == 0
-                    ? FutureBuilder(
-                        future: getHome(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              child: SpinKitPulse(
-                                color: MAIN_COLOR,
-                                size: 60,
-                              ),
-                            );
-                          } else {
-                            List<Silder>? album = [];
-                            if (snapshot.data != null) {
-                              List mysslide = snapshot.data['sliders'];
-                              var companies = snapshot.data['companies'];
-                              var products = snapshot.data['products'];
-                              var categories = snapshot.data['categories'];
-                              List<Silder> album1 = mysslide.map((s) {
-                                Silder c = Silder.fromJson(s);
-                                return c;
-                              }).toList();
-                              album = album1;
-                              return Column(
-                                children: [
-                                  Container(
+                  child: FutureBuilder(
+                      future: getHome(),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: SpinKitPulse(
+                              color: MAIN_COLOR,
+                              size: 60,
+                            ),
+                          );
+                        } else {
+                          List<Silder>? album = [];
+                          if (snapshot.data != null) {
+                            List mysslide = snapshot.data['sliders'];
+                            var companies = snapshot.data['companies'];
+                            var products = snapshot.data['products'];
+                            var categories = snapshot.data['categories'];
+                            List<Silder> album1 = mysslide.map((s) {
+                              Silder c = Silder.fromJson(s);
+                              return c;
+                            }).toList();
+                            album = album1;
+                            return Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height: 220,
+                                  child: SlideImage(
+                                    slideimage: album,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Container(
+                                    height: 20,
                                     width: double.infinity,
-                                    height: 220,
-                                    child: SlideImage(
-                                      slideimage: album,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 20, left: 25),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "الأقسام",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 20, left: 25),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "الأقسام",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 20),
-                                    child: Container(
-                                      height: 140,
-                                      width: double.infinity,
-                                      child: GridView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          // physics:
-                                          //     NeverScrollableScrollPhysics(),
-                                          // shrinkWrap: true,
-                                          itemCount: categories.length,
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 2,
-                                                  // mainAxisSpacing: 10,
-                                                  crossAxisSpacing: 10,
-                                                  childAspectRatio: 0.32),
-                                          itemBuilder: (context, int index) {
-                                            return CategoryWidget(
-                                                name: categories[index]["name"],
-                                                id: categories[index]["id"],
-                                                image: categories[index]
-                                                    ["image"]);
-                                          }),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 40,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 20),
+                                  child: Container(
+                                    height: 140,
                                     width: double.infinity,
-                                    color: MAIN_COLOR,
-                                    child: Center(
-                                      child: Text(
-                                        "أهلا وسهلا بكم في تطبيق  كليمار",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 20, left: 25),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "منتجات",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            InkWell(
-                                              onTap: () {},
-                                              child: Text(
-                                                "المزيد",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: MAIN_COLOR),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10),
                                     child: GridView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: products.length,
+                                        scrollDirection: Axis.horizontal,
+                                        // physics:
+                                        //     NeverScrollableScrollPhysics(),
+                                        // shrinkWrap: true,
+                                        itemCount: categories.length,
                                         gridDelegate:
                                             const SliverGridDelegateWithFixedCrossAxisCount(
                                                 crossAxisCount: 2,
-                                                childAspectRatio: 0.7),
+                                                // mainAxisSpacing: 10,
+                                                crossAxisSpacing: 10,
+                                                childAspectRatio: 0.32),
                                         itemBuilder: (context, int index) {
-                                          return ProductWidget(
-                                              image: products[index]["image"],
-                                              favourite: products[index]
-                                                  ["favourite"],
-                                              category_id: products[index]
-                                                  ["category_id"],
-                                              name:
-                                                  products[index]["name"] ?? "",
-                                              desc: products[index]
-                                                      ["description"] ??
-                                                  "",
-                                              price: products[index]["price"] ??
-                                                  "",
-                                              id: products[index]["id"] ?? 1);
+                                          return CategoryWidget(
+                                              name: categories[index]["name"],
+                                              id: categories[index]["id"],
+                                              image: categories[index]
+                                                  ["image"]);
                                         }),
                                   ),
-                                ],
-                              );
-                            } else {
-                              return Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.25,
-                                width: double.infinity,
-                                color: Colors.white,
-                              );
-                            }
+                                ),
+                                Container(
+                                  height: 40,
+                                  width: double.infinity,
+                                  color: MAIN_COLOR,
+                                  child: Center(
+                                    child: Text(
+                                      "أهلا وسهلا بكم في تطبيق  كليمار",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Container(
+                                    height: 20,
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 20, left: 25),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "منتجات",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          InkWell(
+                                            onTap: () {},
+                                            child: Text(
+                                              "المزيد",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: MAIN_COLOR),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: GridView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: products.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              childAspectRatio: 0.7),
+                                      itemBuilder: (context, int index) {
+                                        return ProductWidget(
+                                            image: products[index]["image"],
+                                            favourite: products[index]
+                                                ["favourite"],
+                                            category_id: products[index]
+                                                ["category_id"],
+                                            name: products[index]["name"] ?? "",
+                                            desc: products[index]
+                                                    ["description"] ??
+                                                "",
+                                            price:
+                                                products[index]["price"] ?? "",
+                                            id: products[index]["id"] ?? 1);
+                                      }),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              width: double.infinity,
+                              color: Colors.white,
+                            );
                           }
-                        })
-                    : MainCategoryWidget(i: 2),
-              ),
+                        }
+                      })),
             ],
           ),
         ],
