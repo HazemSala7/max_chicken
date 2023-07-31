@@ -26,6 +26,12 @@ getCategories() async {
   return res;
 }
 
+GetAllOrders() async {
+  var response = await http.get(Uri.parse(URL_ORDERS), headers: headers);
+  var res = jsonDecode(response.body);
+  return res;
+}
+
 getShopScreen(id) async {
   var url = "$URL_SHOP_SCREEN/$id";
   var response = await http.get(Uri.parse(url), headers: headers);
@@ -127,6 +133,34 @@ addFavourite(product_id, BuildContext context) async {
     Navigator.of(context, rootNavigator: true).pop();
     Fluttertoast.showToast(
       msg: "تمت الاضافه الى المفضله بنجاح",
+    );
+  } else {
+    Navigator.of(context, rootNavigator: true).pop();
+    Fluttertoast.showToast(
+      msg: "محذوف مسبقا",
+    );
+  }
+}
+
+changeOrderStatus(order_id, BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('access_token');
+  int? user_id = prefs.getInt('user_id');
+  var headers1 = {
+    'Authorization': 'Bearer $token',
+    'ContentType': 'application/json'
+  };
+  var response = await http.post(Uri.parse(URL_EDIT_ORDER_STATUS),
+      body: {
+        'id': order_id.toString(),
+        'status': "مع شركه التوصيل",
+      },
+      headers: headers1);
+  var data = json.decode(response.body);
+  if (data['status'] == 'true') {
+    Navigator.of(context, rootNavigator: true).pop();
+    Fluttertoast.showToast(
+      msg: "تم قبول الطلبيه بنجاح",
     );
   } else {
     Navigator.of(context, rootNavigator: true).pop();

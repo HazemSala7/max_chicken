@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="klimar.perfect.sala7">
+    package="max.chekcen.perfect">
     <uses-permission android:name="android.permission.INTERNET"/>
      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> 
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <application
-        android:label="Klimar"
+        android:label="Max Chicken"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

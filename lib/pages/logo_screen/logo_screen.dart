@@ -48,7 +48,7 @@ class _LogoScreenState extends State<LogoScreen> {
                     child: Container(
                       // height: MediaQuery.of(context).size.height * 0.3,
                       // width: 250,
-                      child: Image.asset("assets/logo.png"),
+                      child: Image.asset("assets/logo.jpg"),
                     ),
                   ),
                 ),

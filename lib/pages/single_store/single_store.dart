@@ -142,7 +142,7 @@ class _SingleStoreState extends State<SingleStore> {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Image.asset(
-                                "assets/logo.png",
+                                "assets/logo.jpg",
                                 fit: BoxFit.cover,
                               )),
                     ),

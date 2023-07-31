@@ -1,16 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendyol/pages/logo_screen/logo_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:trendyol/pages/order_notification_service/order_notification_service.dart';
 import 'package:trendyol/services/notification_service/notifications.dart';
 
 void main() async {
   await init();
-  runApp(const Klimar());
+  runApp(const MaxChecken());
 }
 
 Future init() async {
@@ -20,16 +22,16 @@ Future init() async {
 
 Locale? locale;
 
-class Klimar extends StatefulWidget {
-  const Klimar({Key? key}) : super(key: key);
+class MaxChecken extends StatefulWidget {
+  const MaxChecken({Key? key}) : super(key: key);
 
   @override
-  State<Klimar> createState() => _KlimarState();
-  static _KlimarState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_KlimarState>();
+  State<MaxChecken> createState() => _MaxCheckenState();
+  static _MaxCheckenState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MaxCheckenState>();
 }
 
-class _KlimarState extends State<Klimar> {
+class _MaxCheckenState extends State<MaxChecken> {
   void setLocale(Locale value) {
     setState(() {
       locale = value;
@@ -81,7 +83,7 @@ class _KlimarState extends State<Klimar> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -94,7 +96,7 @@ class _KlimarState extends State<Klimar> {
       ],
       locale: Locale("ar", "AE"),
       debugShowCheckedModeBanner: false,
-      title: 'Klimar',
+      title: 'Max Chicken',
       theme: ThemeData(
         textTheme: GoogleFonts.tajawalTextTheme(Theme.of(context).textTheme),
         primarySwatch: Colors.blue,

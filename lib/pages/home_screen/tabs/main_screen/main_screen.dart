@@ -226,7 +226,7 @@ class _MainScreenState extends State<MainScreen> {
                                   color: MAIN_COLOR,
                                   child: Center(
                                     child: Text(
-                                      "أهلا وسهلا بكم في تطبيق  كليمار",
+                                      "أهلا وسهلا بكم في تطبيق ماكس تشيكن",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
@@ -431,7 +431,7 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(
               width: 10,
             ),
-            Expanded(flex: 2, child: Image.asset("assets/logo.png")),
+            Expanded(flex: 2, child: Image.asset("assets/logo.jpg")),
           ],
         ),
       ),

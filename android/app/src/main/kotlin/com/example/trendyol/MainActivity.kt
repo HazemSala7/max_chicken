@@ -1,4 +1,4 @@
-package klimar.perfect.sala7
+package max.chekcen.perfect
 
 import io.flutter.embedding.android.FlutterActivity
 

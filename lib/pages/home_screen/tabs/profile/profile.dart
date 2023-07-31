@@ -4,6 +4,7 @@ import 'package:trendyol/constants/constants.dart';
 import 'package:trendyol/pages/authentication/login_screen/login_screen.dart';
 import 'package:trendyol/pages/home_screen/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trendyol/pages/order_notification_service/order_notification_service.dart';
 import 'package:trendyol/pages/privacy_policy/privacy_policy.dart';
 import 'package:trendyol/pages/who/who.dart';
 
@@ -209,6 +210,19 @@ class _ProfileState extends State<Profile> {
                                     )));
                       }),
                   lineMethod(),
+                  profileCard(
+                      name: "الطلبيات",
+                      iconornot: true,
+                      image: "assets/heart.png",
+                      icon: Icons.request_quote,
+                      NavigatorFunction: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OrderNotificationService(
+                                      ring: false,
+                                    )));
+                      }),
                 ],
               ),
             ),

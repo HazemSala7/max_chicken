@@ -26,7 +26,7 @@ class _SlideImageState extends State<SlideImage> {
               (e) => Image.network(e.image,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Image.asset(
-                        "assets/logo.png",
+                        "assets/logo.jpg",
                         fit: BoxFit.cover,
                       )),
             )

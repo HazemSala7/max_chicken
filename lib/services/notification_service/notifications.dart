@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
+import '../../pages/order_notification_service/order_notification_service.dart';
 import 'local_notification_service.dart';
 
 Future<void> onBackgroundMessage(RemoteMessage message) async {
@@ -26,19 +28,22 @@ class FCM {
   final bodyCtlr = StreamController<String>.broadcast();
 
   setNotifications(context) {
+    // print("hazem");
     LocalNotificationService.initialize(context);
     FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         // putWidget();
         // final routeFromMessage = message.data["route"];
-        // print(routeFromMessage);
       }
     });
 
     ///forground work
     FirebaseMessaging.onMessage.listen((message) {
       if (message.notification != null) {
+        Get.to(OrderNotificationService(
+          ring: true,
+        ));
         LocalNotificationService.display(message);
         print(message.notification!.body);
         print(message.notification!.title);
