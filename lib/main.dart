@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'LocalDB/Provider/CartProvider.dart';
+import 'LocalDB/Provider/FavouriteProvider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:trendyol/pages/logo_screen/logo_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -83,25 +85,31 @@ class _MaxCheckenState extends State<MaxChecken> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => FavouriteProvider()),
       ],
-      supportedLocales: [
-        Locale('en', ''),
-        Locale("ar", "AE"),
-      ],
-      locale: Locale("ar", "AE"),
-      debugShowCheckedModeBanner: false,
-      title: 'Max Chicken',
-      theme: ThemeData(
-        textTheme: GoogleFonts.tajawalTextTheme(Theme.of(context).textTheme),
-        primarySwatch: Colors.blue,
+      child: GetMaterialApp(
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en', ''),
+          Locale("ar", "AE"),
+        ],
+        locale: Locale("ar", "AE"),
+        debugShowCheckedModeBanner: false,
+        title: 'Max Chicken',
+        theme: ThemeData(
+          textTheme: GoogleFonts.tajawalTextTheme(Theme.of(context).textTheme),
+          primarySwatch: Colors.blue,
+        ),
+        home: LogoScreen(),
       ),
-      home: LogoScreen(),
     );
   }
 }

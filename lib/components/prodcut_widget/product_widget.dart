@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trendyol/LocalDB/Models/FavoriteItem.dart';
+import 'package:trendyol/LocalDB/Provider/FavouriteProvider.dart';
 import 'package:trendyol/server/function/functions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../LocalDB/Models/CartModel.dart';
+import '../../LocalDB/Provider/CartProvider.dart';
 import '../../constants/constants.dart';
 import '../../pages/authentication/login_screen/login_screen.dart';
 import '../../pages/product_screen/product_screen.dart';
@@ -26,6 +34,8 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+    final favoriteProvider = Provider.of<FavouriteProvider>(context);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -127,20 +137,24 @@ class _ProductWidgetState extends State<ProductWidget> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       bool? login = prefs.getBool('login');
+                      int UserID = prefs.getInt('user_id') ?? 0;
                       if (login == true) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: Center(
-                                      child: CircularProgressIndicator())),
-                            );
-                          },
+                        final newItem = CartItem(
+                          productId: widget.id,
+                          name: widget.name,
+                          image: widget.image.toString(),
+                          price: double.parse(widget.price.toString()),
+                          quantity: 1,
+                          user_id: UserID,
                         );
-                        await addCart(widget.id, 1, widget.price, context);
+                        cartProvider.addToCart(newItem);
+                        Fluttertoast.showToast(
+                          msg: "تم اضافه هذا المنتج الى سله المنتجات بنجاح",
+                        );
+                        Timer(Duration(milliseconds: 500), () {
+                          Fluttertoast
+                              .cancel(); // Dismiss the toast after the specified duration
+                        });
                       } else {
                         return showDialog(
                           context: context,
@@ -204,84 +218,97 @@ class _ProductWidgetState extends State<ProductWidget> {
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
               child: InkWell(
-                onTap: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  bool? login = prefs.getBool('login');
-                  if (login == true) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                color: MAIN_COLOR,
-                              ))),
+                  onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    bool? login = prefs.getBool('login');
+                    if (login == true) {
+                      final favoriteProvider = Provider.of<FavouriteProvider>(
+                          context,
+                          listen: false);
+                      bool isFavorite =
+                          favoriteProvider.isProductFavorite(widget.id);
+                      if (isFavorite) {
+                        await favoriteProvider.removeFromFavorite(widget.id);
+                        Fluttertoast.showToast(
+                          msg: "تم حذف هذا المنتج من المفضلة بنجاح",
                         );
-                      },
-                    );
+                      } else {
+                        final newItem = FavoriteItem(
+                          productId: widget.id,
+                          name: widget.name,
+                          image: widget.image.toString(),
+                          price: double.parse(widget.price.toString()),
+                        );
+                        await favoriteProvider.addToFavorite(newItem);
+                        Fluttertoast.showToast(
+                          msg: "تم اضافة هذا المنتج الى المفضلة بنجاح",
+                        );
+                      }
 
-                    widget.favourite == false
-                        ? addFavourite(widget.id, context)
-                        : removeFavourite(widget.id, context);
-                    setState(() {
-                      widget.favourite = !widget.favourite;
-                    });
-                  } else {
-                    return showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Text(AppLocalizations.of(context)!.dialogl1),
-                          actions: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
-                                );
-                              },
-                              child: Container(
-                                width: 100,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: MAIN_COLOR,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.login,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                      Timer(Duration(milliseconds: 500), () {
+                        Fluttertoast
+                            .cancel(); // Dismiss the toast after the specified duration
+                      });
+                    } else {
+                      return showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content:
+                                Text(AppLocalizations.of(context)!.dialogl1),
+                            actions: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()),
+                                  );
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: MAIN_COLOR,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.login,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  child: Center(
-                      child: ImageIcon(
-                    AssetImage(widget.favourite == false
-                        ? "assets/like.jpeg"
-                        : "assets/heart.png"),
-                    color: MAIN_COLOR,
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: Consumer<FavouriteProvider>(
+                        builder: (context, favoriteProvider, _) {
+                          bool isFavorite =
+                              favoriteProvider.isProductFavorite(widget.id);
+                          return ImageIcon(
+                            AssetImage(isFavorite
+                                ? "assets/heart.png"
+                                : "assets/like.jpeg"),
+                            color: MAIN_COLOR,
+                          );
+                        },
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
                   )),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
             )
           ],
         ),

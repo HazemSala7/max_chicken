@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LocalDB/Models/FavoriteItem.dart';
+import '../../LocalDB/Provider/FavouriteProvider.dart';
 import '../../constants/constants.dart';
 import '../../model/slider.dart';
 import '../../server/function/functions.dart';
-import '../../services/prodcut_widget/product_widget.dart';
+import '../../components/prodcut_widget/product_widget.dart';
 import '../authentication/login_screen/login_screen.dart';
 import 'dialog_add.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,52 +43,59 @@ class _SingleProductState extends State<SingleProduct> {
         child: Scaffold(
           // appBar: PreferredSize(
           //     child: AppBar2(), preferredSize: Size.fromHeight(50)),
-          body: SingleChildScrollView(
-            child: Container(
-              // color: Colors.white,
-              child: Column(
-                children: [
-                  FutureBuilder(
-                      future: getSingleProduct(
-                          widget.id.toString(), widget.category_id.toString()),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.data != null) {
-                          var nameof = snapshot.data['product'];
-                          return image_product(
-                              image: widget.image,
-                              name: nameof['name'],
-                              id: nameof['id'],
-                              price: nameof['price'],
-                              refresh: () {
-                                Future.delayed(Duration(seconds: 1))
-                                    .then((value) {
-                                  getSingleProduct(widget.id.toString(),
-                                      widget.category_id.toString());
-                                  setState(() {});
-                                });
-                              },
-                              products: snapshot.data['products'],
-                              desc: nameof["description"] ?? "");
-                        } else {
-                          return image_product(
-                              refresh: () {
-                                Future.delayed(Duration(seconds: 1))
-                                    .then((value) {
-                                  getSingleProduct(widget.id.toString(),
-                                      widget.category_id.toString());
-                                  setState(() {});
-                                });
-                              },
-                              image: widget.image,
-                              name: widget.name.toString(),
-                              desc: widget.description.toString(),
-                              products: [],
-                              price: widget.price.toString());
-                        }
-                      }),
-                ],
-              ),
-            ),
+          body: Consumer<FavouriteProvider>(
+            builder: (context, favoriteProvider, _) {
+              bool isFavorite = favoriteProvider.isProductFavorite(widget.id);
+              return SingleChildScrollView(
+                child: Container(
+                  // color: Colors.white,
+                  child: Column(
+                    children: [
+                      FutureBuilder(
+                          future: getSingleProduct(widget.id.toString(),
+                              widget.category_id.toString()),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.data != null) {
+                              var nameof = snapshot.data['product'];
+                              return image_product(
+                                  favoriteCheck: isFavorite,
+                                  image: widget.image,
+                                  name: nameof['name'],
+                                  id: nameof['id'],
+                                  price: nameof['price'],
+                                  refresh: () {
+                                    Future.delayed(Duration(seconds: 1))
+                                        .then((value) {
+                                      getSingleProduct(widget.id.toString(),
+                                          widget.category_id.toString());
+                                      setState(() {});
+                                    });
+                                  },
+                                  products: snapshot.data['products'],
+                                  desc: nameof["description"] ?? "");
+                            } else {
+                              return image_product(
+                                  favoriteCheck: isFavorite,
+                                  refresh: () {
+                                    Future.delayed(Duration(seconds: 1))
+                                        .then((value) {
+                                      getSingleProduct(widget.id.toString(),
+                                          widget.category_id.toString());
+                                      setState(() {});
+                                    });
+                                  },
+                                  image: widget.image,
+                                  name: widget.name.toString(),
+                                  desc: widget.description.toString(),
+                                  products: [],
+                                  price: widget.price.toString());
+                            }
+                          }),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -212,6 +225,7 @@ class _SingleProductState extends State<SingleProduct> {
       int id = 0,
       String price = "",
       Function? refresh,
+      bool favoriteCheck = false,
       String desc = "",
       var products}) {
     return Column(
@@ -249,25 +263,33 @@ class _SingleProductState extends State<SingleProduct> {
                               await SharedPreferences.getInstance();
                           bool? login = prefs.getBool('login');
                           if (login == true) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                        color: MAIN_COLOR,
-                                      ))),
-                                );
-                              },
-                            );
-                            widget.favourite == false
-                                ? addFavourite(widget.id, context)
-                                : removeFavourite(widget.id, context);
-                            setState(() {
-                              widget.favourite = !widget.favourite;
+                            final favoriteProvider =
+                                Provider.of<FavouriteProvider>(context,
+                                    listen: false);
+                            bool isFavorite =
+                                favoriteProvider.isProductFavorite(widget.id);
+                            if (isFavorite) {
+                              await favoriteProvider
+                                  .removeFromFavorite(widget.id);
+                              Fluttertoast.showToast(
+                                msg: "تم حذف هذا المنتج من المفضلة بنجاح",
+                              );
+                            } else {
+                              final newItem = FavoriteItem(
+                                productId: widget.id,
+                                name: widget.name,
+                                image: widget.image.toString(),
+                                price: double.parse(widget.price.toString()),
+                              );
+                              await favoriteProvider.addToFavorite(newItem);
+                              Fluttertoast.showToast(
+                                msg: "تم اضافة هذا المنتج الى المفضلة بنجاح",
+                              );
+                            }
+
+                            Timer(Duration(milliseconds: 500), () {
+                              Fluttertoast
+                                  .cancel(); // Dismiss the toast after the specified duration
                             });
                           } else {
                             return showDialog(
@@ -310,9 +332,9 @@ class _SingleProductState extends State<SingleProduct> {
                           }
                         },
                         child: ImageIcon(
-                          AssetImage(widget.favourite == false
-                              ? "assets/like.jpeg"
-                              : "assets/heart.png"),
+                          AssetImage(favoriteCheck
+                              ? "assets/heart.png"
+                              : "assets/like.jpeg"),
                           color: MAIN_COLOR,
                           size: 30,
                         ),
@@ -540,25 +562,35 @@ class _SingleProductState extends State<SingleProduct> {
                                   await SharedPreferences.getInstance();
                               bool? login = prefs.getBool('login');
                               if (login == true) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      content: SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: Center(
-                                              child: CircularProgressIndicator(
-                                            color: MAIN_COLOR,
-                                          ))),
-                                    );
-                                  },
-                                );
-                                widget.favourite == false
-                                    ? addFavourite(widget.id, context)
-                                    : removeFavourite(widget.id, context);
-                                setState(() {
-                                  widget.favourite = !widget.favourite;
+                                final favoriteProvider =
+                                    Provider.of<FavouriteProvider>(context,
+                                        listen: false);
+                                bool isFavorite = favoriteProvider
+                                    .isProductFavorite(widget.id);
+                                if (isFavorite) {
+                                  await favoriteProvider
+                                      .removeFromFavorite(widget.id);
+                                  Fluttertoast.showToast(
+                                    msg: "تم حذف هذا المنتج من المفضلة بنجاح",
+                                  );
+                                } else {
+                                  final newItem = FavoriteItem(
+                                    productId: widget.id,
+                                    name: widget.name,
+                                    image: widget.image.toString(),
+                                    price:
+                                        double.parse(widget.price.toString()),
+                                  );
+                                  await favoriteProvider.addToFavorite(newItem);
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        "تم اضافة هذا المنتج الى المفضلة بنجاح",
+                                  );
+                                }
+
+                                Timer(Duration(milliseconds: 500), () {
+                                  Fluttertoast
+                                      .cancel(); // Dismiss the toast after the specified duration
                                 });
                               } else {
                                 return showDialog(
@@ -612,9 +644,9 @@ class _SingleProductState extends State<SingleProduct> {
                               height: 35,
                               child: Center(
                                 child: Text(
-                                  widget.favourite == false
-                                      ? "اضافه الى المفضله"
-                                      : "ازاله من المفضله",
+                                  favoriteCheck
+                                      ? "ازاله من المفضله"
+                                      : "اضافه الى المفضله",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,

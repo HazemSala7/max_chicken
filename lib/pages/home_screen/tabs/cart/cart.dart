@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../../LocalDB/Models/CartModel.dart';
+import '../../../../LocalDB/Provider/CartProvider.dart';
 import '../../../../constants/constants.dart';
 import '../../../../server/function/functions.dart';
 import '../../../../server/server.dart';
@@ -19,111 +23,87 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getCarts(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              child: Center(
-                child: SpinKitPulse(
-                  color: MAIN_COLOR,
-                  size: 60,
-                ),
-              ),
-            );
-          } else if (snapshot.data != null) {
-            var album1 = snapshot.data["carts"];
-            return CartScreen(
-                CartsArray: album1, SUM_ALL: snapshot.data["result"]);
-          } else {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: double.infinity,
-              child: Center(
-                child: Text('Cart is empty'),
-              ),
-            );
-          }
-        });
+    return CartScreen();
   }
 
-  Widget CartScreen({var CartsArray, var SUM_ALL}) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-                child: Text(
-                  "سله المشتريات",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 100),
-                child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: CartsArray.length,
-                    itemBuilder: (context, int index) {
-                      return SalaCart(
-                          image: CartsArray[index]["image"],
-                          name: CartsArray[index]["name"],
-                          qty: CartsArray[index]["qty"] ?? 0,
-                          price: CartsArray[index]["price"] ?? "",
-                          sum: CartsArray[index]["sum"] ?? 0,
-                          id: CartsArray[index]["id"],
-                          cart2id: CartsArray[index]["id"],
-                          ondelete: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                        color: MAIN_COLOR,
-                                      ))),
-                                );
+  Widget CartScreen() {
+    return Consumer<CartProvider>(
+      builder: (context, cartProvider, _) {
+        List<CartItem> cartItems = cartProvider.cartItems;
+        double total = 0;
+        for (CartItem item in cartItems) {
+          total += item.price * item.quantity;
+        }
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 15, right: 15),
+                    child: Text(
+                      "سله المشتريات",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  cartItems.length != 0
+                      ? ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: cartItems.length,
+                          itemBuilder: (context, index) {
+                            CartItem item = cartItems[index];
+                            double total = item.price * item.quantity;
+                            return SalaCart(
+                              cartProvider: cartProvider,
+                              id: 2,
+                              price: item.price,
+                              name: item.name,
+                              qty: item.quantity,
+                              sum: total,
+                              removeProduct: () {
+                                cartProvider.removeFromCart(item);
+                                setState(() {});
                               },
+                              image: item.image,
+                              item: item,
                             );
-                            removeCart(CartsArray[index]["id"], context);
-                            setState(() {
-                              getCarts();
-                            });
                           },
-                          onupdate: () {
-                            setState(() {
-                              getCarts();
-                            });
-                          },
-                          onedit: () {
-                            setState(() {});
-                          },
-                          onQuantityChanged: (newAmount, newPrice) {
-                            CartsArray[index]["qty"] = newAmount;
-                            CartsArray[index]["sum"] = newPrice;
-                          });
-                    }),
+                        )
+                      : Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "لا يوجد منتجات بالسله",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 17),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Icon(Icons.no_accounts_sharp)
+                            ],
+                          ),
+                        ),
+                  SizedBox(
+                    height: 100,
+                  )
+                ],
               ),
-              SizedBox(
-                height: 100,
-              )
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 80),
-          child: cartnav(SUM_ALL: SUM_ALL, CartsArray: CartsArray),
-        )
-      ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 80),
+              child: cartnav(SUM_ALL: total, CartsArray: cartItems),
+            )
+          ],
+        );
+      },
     );
   }
 
@@ -197,25 +177,21 @@ class _CartState extends State<Cart> {
 }
 
 class SalaCart extends StatefulWidget {
-  Function? ondelete;
-  Function? onedit;
   String image = "";
   String name = "";
   int qty = 0;
-  Function? onQuantityChanged;
+  Function removeProduct;
+  CartProvider cartProvider;
+  CartItem item;
   var price;
-  // String details;
   var sum;
   var id;
   var cart2id;
-  Function onupdate;
-
-  // Function onQuantityChanged;
   SalaCart({
     Key? key,
-    required this.ondelete,
-    required this.onupdate,
-    this.onQuantityChanged,
+    required this.removeProduct,
+    required this.cartProvider,
+    required this.item,
     required this.image,
     required this.name,
     required this.qty,
@@ -223,9 +199,6 @@ class SalaCart extends StatefulWidget {
     this.sum,
     this.id,
     this.cart2id,
-    // required this.onQuantityChanged,
-    // required this.details,
-    required this.onedit,
   }) : super(key: key);
 
   @override
@@ -234,33 +207,9 @@ class SalaCart extends StatefulWidget {
 
 class _SalaCartState extends State<SalaCart> {
   @override
-  editcart(id, qty) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('access_token');
-    var headers = {
-      'Authorization': 'Bearer $token',
-      'ContentType': 'application/json'
-    };
-    var response = await http.post(Uri.parse(URL_EDIT_CART),
-        body: {
-          'id': id.toString(),
-          'qty': qty.toString(),
-        },
-        headers: headers);
-    var data = json.decode(response.body);
-
-    if (data['status'] == 'true') {
-      print("success");
-      return data;
-    } else {
-      print("failed");
-      return null;
-    }
-  }
-
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 25, right: 15, left: 15),
+      padding: const EdgeInsets.only(top: 25),
       child: Container(
           height: 140,
           width: double.infinity,
@@ -276,29 +225,28 @@ class _SalaCartState extends State<SalaCart> {
               color: Color(0xffF6F6F6)),
           child: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: InkWell(
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => SingleProduct(
-                    //             price: widget.price,
-                    //             id: int.parse(widget.id),
-                    //             name: widget.name,
-                    //             // name: name,
-                    //             isfavourate: false,
-                    //           )),
-                    // );
-                  },
-                  child: SizedBox(
+              InkWell(
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => SingleProduct(
+                  //             price: widget.price,
+                  //             id: int.parse(widget.id),
+                  //             name: widget.name,
+                  //             // name: name,
+                  //             isfavourate: false,
+                  //           )),
+                  // );
+                },
+                child: SizedBox(
+                  height: 130,
+                  width: 100,
+                  child: Image.network(
+                    widget.image,
+                    fit: BoxFit.cover,
                     height: 130,
                     width: 100,
-                    child: Image.network(
-                      widget.image,
-                      fit: BoxFit.cover,
-                    ),
                   ),
                 ),
               ),
@@ -330,22 +278,15 @@ class _SalaCartState extends State<SalaCart> {
                             width: 10,
                           ),
                           InkWell(
-                            onTap: () async {
-                              setState(() {
-                                widget.qty++;
-                                // widget.onQuantityChanged(
-                                //     widget.qty, widget.sum);
-                              });
-                              var response =
-                                  await editcart(widget.id, widget.qty);
-                              if (response['status'] != 'true') {
-                                widget.qty--;
-                                // widget.onQuantityChanged(
-                                //     widget.qty, widget.sum);
-                              } else {
-                                print("Increased successfully");
-                                widget.onupdate();
-                              }
+                            onTap: () {
+                              int quantity = int.parse(widget.qty.toString());
+                              // Call the updateCartItem function in CartProvider
+                              widget.cartProvider.updateCartItem(
+                                widget.item.copyWith(
+                                  quantity: quantity + 1,
+                                ),
+                              );
+                              setState(() {});
                             },
                             child: Container(
                               height: 30,
@@ -388,40 +329,17 @@ class _SalaCartState extends State<SalaCart> {
                             ),
                           ),
                           InkWell(
-                            onTap: () async {
-                              // ---
-
-                              // int qt = widget.qty;
-                              var id1 = widget.id;
-                              // var qt = qty;
-                              // if (widget.qty > 1) {
-                              // minus();
-                              // setState(() {
-                              //   widget.qty--;
-                              //   widget.onQuantityChanged(
-                              //       widget.qty, widget.sum);
-                              // });
-                              // var response = await editcart();
-                              // editcart(widget.id, widget.qty);
-                              // widget.onedit();
-                              setState(() {
-                                if (widget.qty != 1) widget.qty--;
-                              });
-                              var response =
-                                  await editcart(widget.id, widget.qty);
-
-                              if (response['status'] != 'true') {
-                                print("Error decreasing");
-                                widget.qty++;
-
-                                // widget.onQuantityChanged(
-                                //     widget.qty, widget.sum);
-                              } else {
-                                print("Decreased successfully");
-                                widget.onupdate();
+                            onTap: () {
+                              if (widget.qty > 1) {
+                                int quantity = int.parse(widget.qty.toString());
+                                // Call the updateCartItem function in CartProvider
+                                widget.cartProvider.updateCartItem(
+                                  widget.item.copyWith(
+                                    quantity: quantity - 1,
+                                  ),
+                                );
+                                setState(() {});
                               }
-
-                              // }
                             },
                             child: Container(
                               height: 30,
@@ -483,7 +401,62 @@ class _SalaCartState extends State<SalaCart> {
               ),
               IconButton(
                 onPressed: () {
-                  widget.ondelete!();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content:
+                            Text("هل تريد بالتأكيد حذف هذا المنتج من الطلبيه؟"),
+                        actions: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  widget.removeProduct();
+                                  Fluttertoast.showToast(
+                                      msg: "تم حذف المنتج بنجاح");
+                                },
+                                child: Container(
+                                  height: 50,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: MAIN_COLOR),
+                                  child: Center(
+                                    child: Text(
+                                      "نعم",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 50,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: MAIN_COLOR),
+                                child: Center(
+                                  child: Text(
+                                    "لا",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  );
                 },
                 icon: const Icon(Icons.delete),
                 color: MAIN_COLOR,

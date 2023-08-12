@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../constants/constants.dart';
 import '../../server/function/functions.dart';
-import '../../services/prodcut_widget/product_widget.dart';
+import '../../components/prodcut_widget/product_widget.dart';
 
 class Products extends StatefulWidget {
   final category_id;
