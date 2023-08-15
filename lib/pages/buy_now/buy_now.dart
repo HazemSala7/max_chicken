@@ -187,10 +187,7 @@ class _BuyNowState extends State<BuyNow> {
             'sum': widget.total.toString(),
           },
           headers: headers);
-
       var data = json.decode(response.body.toString());
-      print("data");
-      print(data);
       if (data['status'] == 'true') {
         Navigator.of(context, rootNavigator: true).pop();
         Fluttertoast.showToast(msg: AppLocalizations.of(context)!.req_suc);
